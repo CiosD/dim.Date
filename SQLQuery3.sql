@@ -10,36 +10,35 @@ END CATCH
 
 CREATE TABLE [dbo].[DimDate]
 	(	[date_key] INT primary key, 
-		[Date] date not Null,
-		[DateName] char(11),
-		[DateNameUS1] CHAR(11),-- Date in MM-dd-yyyy format
-		[DateNameUS2] CHAR(11),-- Date in MM-dd-yyyy format
-		[DateNameEU] CHAR(11), -- Date in dd-MM-yyyy format
-		[DateNameCustom1] VARCHAR(45),
-		[DayOfWeek] CHAR(1),-- First Day Sunday=1 and Saturday=7
+		[Date] date not Null, --Date in YYYY-mm-dd format
+		[DateName] char(11), --Date in YYYY/mm/dd format
+		[DateNameUS1] CHAR(11),-- Date in MM/dd/yyyy format
+		[DateNameUS2] CHAR(11),-- Date in M/dd/yyyy format
+		[DateNameEU] CHAR(11), -- Date in dd/MM/yyyy format
+		[DateNameCustom1] VARCHAR(45), -- Monday, Mar 01, 2021
+		[DayOfWeek] CHAR(1),-- First Day Sunday=1, last day Saturday=7
 		[DayNameOfWeek] VARCHAR(9), -- Contains name of the day, Sunday, Monday 
-		[DayOfMonth] VARCHAR(2), -- Field will hold day number of Month
-		[DayOfYear] VARCHAR(3),
-		[WeekdayWeekend] char(10),-- 0=Week End ,1=Week Day,
+		[DayOfMonth] VARCHAR(2), -- Field with number of Month
+		[DayOfYear] VARCHAR(3), -- Field with number of Day
+		[WeekdayWeekend] char(10),-- Weekend (Saturday and Sunday) or Weekday 
 		[WeekOfYear] VARCHAR(2),--Week Number of the Year
 		[MonthName] VARCHAR(9),--January, February etc
-		[MonthNameShort] varchar(3),
+		[MonthNameShort] varchar(3), --Jan, Feb etc
 		[MonthOfYear] VARCHAR(2), --Number of the Month 1 to 12
-		[IsFirstDayOfMonth] CHAR(1),
-		[IsLastDayOfMonth] CHAR(1),
-		[Quarter] CHAR(1),
-		[Year] CHAR(4),-- Year value of Date stored in Row
-		[YearWeek] CHAR(10), --CY 2012,CY 2013
-		[Year-Month] CHAR(10), --Jan-2013,Feb-2013
-		[YearMonth] CHAR(10),
-		[YearQuarter] CHAR(10),
+		[IsFirstDayOfMonth] CHAR(1), -- Yes or No
+		[IsLastDayOfMonth] CHAR(1), -- Yes or No
+		[Quarter] CHAR(1), -- 1 to 4
+		[Year] CHAR(4),-- YYYY
+		[YearWeek] CHAR(10), -- YYYYWW
+		[Year-Month] CHAR(10), -- YYYY-MM
+		[YearMonth] CHAR(10), -- YYYYMM
+		[YearQuarter] CHAR(10), -- YYYYQ1, YYYYQ2 etc
 	)
 GO
 
 
 /********************************************************************************************/
 --Specify Start Date and End date here
---Value of Start Date Must be Less than Your End Date 
 
 DECLARE @StartDate DATETIME = '03/01/2021' --Starting value of Date Range
 DECLARE @EndDate DATETIME = '01/01/2023' --End Value of Date Range
@@ -73,7 +72,7 @@ SET @CurrentYear = DATEPART(YY, @CurrentDate)
 SET @CurrentQuarter = DATEPART(QQ, @CurrentDate)
 
 /********************************************************************************************/
---Proceed only if Start Date(Current date ) is less than End date you specified above
+--Proceed only if Start Date(Current date) is less than End date specified above
 
 WHILE @CurrentDate < @EndDate
 BEGIN
@@ -100,8 +99,7 @@ BEGIN
 	END
        
         /* Check for Change in Year of the Current date if Year changed then change 
-         Variable value*/
-	
+         Variable value*/	
 
 	IF @CurrentYear != DATEPART(YY, @CurrentDate)
 	BEGIN
@@ -128,8 +126,7 @@ BEGIN
 	
 /*End day of week logic*/
 
-
-/* Populate Your Dimension Table with values*/
+/* Populate Dimension Table with values*/
 	
 	INSERT INTO [dbo].[DimDate]
 	SELECT
